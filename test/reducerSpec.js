@@ -79,9 +79,10 @@ describe('reducer', () => {
         }));
     });
 
-    it('handles VOTE by setting hasVoted', () => {
+    it('handles VOTE by setting myVote', () => {
         const state = fromJS({
             vote: {
+                round: 9,
                 pair: ['Movie ID 1', 'Movie ID 2'],
                 tally: {'Movie ID 1': 5}
             }
@@ -94,46 +95,57 @@ describe('reducer', () => {
 
         expect(nextState).to.equal(fromJS({
             vote: {
+                round: 9,
                 pair: ['Movie ID 1', 'Movie ID 2'],
                 tally: {'Movie ID 1': 5}
             },
-            hasVoted: 'Movie ID 1'
+            myVote: {
+                round: 9,
+                entry: 'Movie ID 1'
+            }
         }));
     });
 
-    it('does not set hasVoted for VOTE on invalid entry', () => {
+    it('does not set myVote for VOTE on invalid entry', () => {
         const state = fromJS({
             vote: {
+                round: 9,
                 pair: ['Movie ID 1', 'Movie ID 2'],
                 tally: {'Movie ID 1': 5}
             }
         });
         const action = {
             type: 'VOTE',
-            entry: 'Whatever'
+            entry: 'whatever'
         };
         const nextState = reducer(state, action);
 
         expect(nextState).to.equal(fromJS({
             vote: {
+                round: 9,
                 pair: ['Movie ID 1', 'Movie ID 2'],
                 tally: {'Movie ID 1': 5}
             }
         }));
     });
 
-    it('removes hasVoted on SET_STATE if pair changes', () => {
+    it('removes hasVoted on SET_STATE if round has changed', () => {
         const initialState = fromJS({
             vote: {
+                round: 9,
                 pair: ['Movie ID 1', 'Movie ID 2'],
                 tally: {'Movie ID 1': 5}
             },
-            hasVoted: 'Movie ID 1'
+            myVote: {
+                round: 9,
+                entry: 'Movie ID 1'
+            }
         });
         const action = {
             type: 'SET_STATE',
             state: {
                 vote: {
+                    round: 10,
                     pair: ['Movie ID 3', 'Movie ID 4']
                 }
             }
@@ -142,6 +154,7 @@ describe('reducer', () => {
 
         expect(newState).equal(fromJS({
             vote: {
+                round: 10,
                 pair: ['Movie ID 3', 'Movie ID 4']
             }
         }));
