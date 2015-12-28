@@ -28,7 +28,25 @@ describe('Results', () => {
         expect(Movie2).to.contain('0');
     });
 
-    it('invokes the callback when next button is clicked', () => {
+    it('invokes action callback when restart button is clicked', () => {
+        let restartInvoked = false;
+        const restart = () => restartInvoked = true;
+        const pair = List.of('Movie ID 1', 'Movie ID 2');
+        const component = renderIntoDocument(
+            <Results
+                pair={pair}
+                tally={Map()}
+                restart={restart}
+            />
+        );
+
+        Simulate.click(ReactDOM.findDOMNode(component.refs.restart));
+
+        expect(restartInvoked).to.equal(true);
+
+    });
+
+    it('invokes action callback when next button is clicked', () => {
         let nextInvoked = false;
         const next = () => nextInvoked = true;
         const pair = List.of('Movie ID 1', 'Movie ID 2');

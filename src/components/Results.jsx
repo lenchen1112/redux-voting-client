@@ -39,6 +39,7 @@ export const Results = React.createClass({
                     )}
                 </div>
                 <div className="management">
+                    <button className="restart" ref="restart" onClick={this.props.restart}>Restart</button>
                     <button className="next" ref="next" onClick={this.props.next}>Next</button>
                 </div>
             </div>
