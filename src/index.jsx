@@ -5,10 +5,11 @@ import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import io from 'socket.io-client';
 import reducer from './reducer';
-import {setState, setClientId} from './actionCreators';
+import {setState, setClientId, setConnectionState} from './actionCreators';
 import remoteActionMiddleware from './remoteActionMiddleware';
 import getClientId from './clientId';
 import App from './components/App';
+import ConnectionStateContainer from './components/ConnectionState';
 import VotingContainer from './components/Voting';
 import ResultsContainer from './components/Results';
 
@@ -24,6 +25,20 @@ socket.on('state', state =>
     store.dispatch(setState(state))
 );
 
+[
+    'connect',
+    'connect_error',
+    'connect_timeout',
+    'reconnect',
+    'reconnecting',
+    'reconnect_error',
+    'reconnect_failed'
+].forEach(event => 
+    socket.on(event, () => 
+        store.dispatch(setConnectionState(event, socket.connected))
+    )
+);
+
 const routes = (
     <Route component={App}>
         <Route path="/results" component={ResultsContainer} />
@@ -33,7 +48,10 @@ const routes = (
 
 ReactDOM.render(
     <Provider store={store}>
-        <Router>{routes}</Router>
+        <div>
+            <ConnectionStateContainer />
+            <Router>{routes}</Router>
+        </div>
     </Provider>,
     document.getElementById('app')
 );
